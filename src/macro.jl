@@ -1,6 +1,5 @@
 macro serializer_cache(id, ex)
     quote
-        begin
             if !isdir(PATH)
                 mkdir(PATH)
             end
@@ -14,6 +13,5 @@ macro serializer_cache(id, ex)
                 Serialization.serialize(file, data)
                 data
             end
-        end
     end
 end
