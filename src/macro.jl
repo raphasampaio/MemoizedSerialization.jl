@@ -1,10 +1,6 @@
-macro serializer_cache(id, ex)
+macro memoized_serialization(id, ex)
     quote
-        if !isdir(PATH)
-            mkdir(PATH)
-        end
-
-        file = joinpath(PATH, string($(esc(id)), ".bin"))
+        file = joinpath(CACHE_PATH[], string($(esc(id)), ".bin"))
 
         if isfile(file)
             Serialization.deserialize(file)

@@ -1,14 +1,15 @@
 module MemoizedSerialization
 
-using Random
 using Serialization
 
-const PATH = joinpath(tempdir(), randstring(16))
+const CACHE_PATH = Ref{String}()
 
-include("initializer.jl")
-include("finalizer.jl")
+function __init__()
+    CACHE_PATH[] = mktempdir()
+end
+
+export @memoized_serialization
+
 include("macro.jl")
-
-export @serializer_cache
 
 end

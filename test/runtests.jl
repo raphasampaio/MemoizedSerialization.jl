@@ -26,9 +26,9 @@ function test_all()
     for i in 1:3
         for a in 1:5
             for b in 1:10
-                @test a + b == @serializer_cache "a=$a=$b" sum(a, b)
+                @test a + b == @memoized_serialization "a=$a=$b" sum(a, b)
 
-                @test Struct(a, b) == @serializer_cache "struct(a=$a=$b)" Struct(a, b)
+                @test Struct(a, b) == @memoized_serialization "struct(a=$a=$b)" Struct(a, b)
             end
         end
     end
