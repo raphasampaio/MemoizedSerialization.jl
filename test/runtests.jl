@@ -30,24 +30,28 @@ function test_all()
     end
 
     global calls = 0
-    @test 2 == @memoized_serialization "1_1" sum(1, 1)
-    @test 2 == @memoized_serialization "1_1" sum(1, 1)
-    @test 3 == @memoized_serialization "1_2" sum(1, 2)
-    @test 4 == @memoized_serialization "1_3" sum(1, 3)
-    @test 3 == @memoized_serialization "1_2" sum(1, 2)
-    @test 2 == @memoized_serialization "1_1" sum(1, 1)
-    @test 2 == @memoized_serialization "1_1" sum(1, 1)
+    @test @memoized_serialization "1_1" sum(1, 1) == 2
+    @test @memoized_serialization "1_1" sum(1, 1) == 2
+    @test @memoized_serialization "1_2" sum(1, 2) == 3
+    @test @memoized_serialization "1_3" sum(1, 3) == 4
+    @test @memoized_serialization "1_2" sum(1, 2) == 3
+    @test @memoized_serialization "1_1" sum(1, 1) == 2
+    @test @memoized_serialization "1_1" sum(1, 1) == 2
     @test calls == 3
 
+    struct11 = Struct(1, 1)
+    struct12 = Struct(1, 2)
+    struct13 = Struct(1, 3)
+
     global calls = 0
-    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
-    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
-    @test Struct(1, 2) == @memoized_serialization "struct_1_2" Struct(1, 2)
-    @test Struct(1, 3) == @memoized_serialization "struct_1_3" Struct(1, 3)
-    @test Struct(1, 2) == @memoized_serialization "struct_1_2" Struct(1, 2)
-    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
-    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
-    @test calls == 10
+    @test struct11 == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test struct11 == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test struct12 == @memoized_serialization "struct_1_2" Struct(1, 2)
+    @test struct13 == @memoized_serialization "struct_1_3" Struct(1, 3)
+    @test struct12 == @memoized_serialization "struct_1_2" Struct(1, 2)
+    @test struct11 == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test struct11 == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test calls == 3
 
     return nothing
 end
