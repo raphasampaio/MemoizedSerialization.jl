@@ -8,6 +8,11 @@ include("aqua.jl")
 struct Struct
     a::Int
     b::Int
+
+    function Struct(a::Integer, b::Integer)
+        global calls += 1
+        return new(a, b)
+    end
 end
 
 function Base.:(==)(s1::Struct, s2::Struct)
@@ -15,6 +20,7 @@ function Base.:(==)(s1::Struct, s2::Struct)
 end
 
 function sum(a::Integer, b::Integer)
+    global calls += 1
     return a + b
 end
 
@@ -23,15 +29,25 @@ function test_all()
         test_aqua()
     end
 
-    for i in 1:3
-        for a in 1:5
-            for b in 1:10
-                @test a + b == @memoized_serialization "a=$a=$b" sum(a, b)
+    global calls = 0
+    @test 2 == @memoized_serialization "1_1" sum(1, 1)
+    @test 2 == @memoized_serialization "1_1" sum(1, 1)
+    @test 3 == @memoized_serialization "1_2" sum(1, 2)
+    @test 4 == @memoized_serialization "1_3" sum(1, 3)
+    @test 3 == @memoized_serialization "1_2" sum(1, 2)
+    @test 2 == @memoized_serialization "1_1" sum(1, 1)
+    @test 2 == @memoized_serialization "1_1" sum(1, 1)
+    @test calls == 3
 
-                @test Struct(a, b) == @memoized_serialization "struct(a=$a=$b)" Struct(a, b)
-            end
-        end
-    end
+    global calls = 0
+    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test Struct(1, 2) == @memoized_serialization "struct_1_2" Struct(1, 2)
+    @test Struct(1, 3) == @memoized_serialization "struct_1_3" Struct(1, 3)
+    @test Struct(1, 2) == @memoized_serialization "struct_1_2" Struct(1, 2)
+    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test Struct(1, 1) == @memoized_serialization "struct_1_1" Struct(1, 1)
+    @test calls == 10
 
     return nothing
 end

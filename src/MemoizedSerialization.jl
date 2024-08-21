@@ -6,6 +6,7 @@ const CACHE_PATH = Ref{String}()
 
 function __init__()
     CACHE_PATH[] = mktempdir()
+    return nothing
 end
 
 export @memoized_serialization
