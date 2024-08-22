@@ -6,9 +6,9 @@
 
 ## Introduction
 
-MemoizedSerialization.jl is a Julia package that provides a macro for memoizing the results of function calls using Serialization.jl. This is particularly useful for expensive computations with non-hashable arguments, as it allows the user to define custom keys for memoization.
+MemoizedSerialization.jl is a Julia package that provides a macro for memoizing the results of function calls using Serialization.jl. This is particularly useful for expensive computations with non-hashable arguments, as it allows the user to define custom keys for memoization. This package allows you to persist the results of function calls and retrieve them from disk if they have been previously computed, saving time for repeated evaluations.
 
-This package allows you to persist the results of function calls and retrieve them from disk if they have been previously computed, saving time for repeated evaluations.
+## Features
 
 - Memoize expensive computations with user-defined keys.
 - Serialize and deserialize results using Serialization.jl.
@@ -34,15 +34,15 @@ function sum(a, b)
     return a + b
 end
 
-# First call with (1, 2) - computation is performed and result is serialized
+# first call with (1, 2) - computation is performed and result is serialized
 a, b = 1, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
 
-# Second call with (2, 2) - computation is performed and result is serialized
+# second call with (2, 2) - computation is performed and result is serialized
 a, b = 2, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
 
-# Third call with (1, 2) - result is loaded from cache (deserialized)
+# third call with (1, 2) - result is loaded from cache (deserialized)
 a, b = 1, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
 
@@ -55,7 +55,7 @@ You can also specify an explicit path to store the serialized results:
 ```julia
 using MemoizedSerialization
 
-# Define a temporary directory for storage
+# define a directory for storage
 path = mktempdir()
 
 function sum(a, b)
@@ -63,15 +63,15 @@ function sum(a, b)
     return a + b
 end
 
-# First call with (1, 2) - computation is performed and result is serialized at the specified path
+# first call with (1, 2) - computation is performed and result is serialized at the specified path
 a, b = 1, 2
 result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 
-# Second call with (2, 2) - computation is performed and result is serialized at the specified path
+# second call with (2, 2) - computation is performed and result is serialized at the specified path
 a, b = 2, 2
 result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 
-# Third call with (1, 2) - result is loaded from cache (deserialized) from the specified path
+# third call with (1, 2) - result is loaded from cache (deserialized) from the specified path
 a, b = 1, 2
 result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 ```
