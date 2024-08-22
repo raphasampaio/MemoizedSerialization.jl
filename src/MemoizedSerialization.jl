@@ -5,7 +5,7 @@ using Serialization
 const CACHE_PATH = Ref{String}()
 
 function __init__()
-    CACHE_PATH[] = mktempdir()
+    CACHE_PATH[] = mktempdir(; cleanup = true)
     return nothing
 end
 

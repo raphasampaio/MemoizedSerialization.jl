@@ -1,15 +1,18 @@
-macro memoized_serialization(key, ex)
+macro memoized_serialization(path, key, expr)
     return quote
         begin
-            file = joinpath(CACHE_PATH[], string($(esc(key)), ".bin"))
-
+            file = joinpath($(esc(path)), string($(esc(key)), ".tmp"))
             if isfile(file)
-                return Serialization.deserialize(file)
+                Serialization.deserialize(file)
             else
-                data = $(esc(ex))
+                data = $(esc(expr))
                 Serialization.serialize(file, data)
-                return data
+                data
             end
         end
     end
+end
+
+macro memoized_serialization(key, expr)
+    return :(@memoized_serialization(CACHE_PATH[], $(esc(key)), $(esc(expr))))
 end
