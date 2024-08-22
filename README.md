@@ -6,7 +6,13 @@
 
 ## Introduction
 
-MemoizedSerialization.jl is a Julia package that provides a macro to memoize the result of a function call using Serialization.jl. This package is useful when the function is expensive to compute and the arguments are not hashable, since the key is provided by the user.
+MemoizedSerialization.jl is a Julia package that provides a macro for memoizing the results of function calls using Serialization.jl. This is particularly useful for expensive computations with non-hashable arguments, as it allows the user to define custom keys for memoization.
+
+This package allows you to persist the results of function calls and retrieve them from disk if they have been previously computed, saving time for repeated evaluations.
+
+- Memoize expensive computations with user-defined keys.
+- Serialize and deserialize results using Serialization.jl.
+- Flexibility to manage paths either implicitly or explicitly.
 
 ## Getting Started
 
@@ -16,37 +22,60 @@ MemoizedSerialization.jl is a Julia package that provides a macro to memoize the
 julia> ] add MemoizedSerialization
 ```
 
-### Example using implicit path
+### Example 1: Using an Implicit Path
+
+The following example demonstrates memoization where the path for serialization is implicitly managed:
 
 ```julia
 using MemoizedSerialization
 
 function sum(a, b)
-    println("Computing f($a, $b)")
+    println("Computing sum($a, $b)")
     return a + b
 end
 
+# First call with (1, 2) - computation is performed and result is serialized
 a, b = 1, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
 
+# Second call with (2, 2) - computation is performed and result is serialized
 a, b = 2, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
 
+# Third call with (1, 2) - result is loaded from cache (deserialized)
 a, b = 1, 2
-result = @memoized_serialization "sum-$a-$b" sum(a, b) # cached
+result = @memoized_serialization "sum-$a-$b" sum(a, b)
+
 ```
 
-### Example using explicit path
+### Example 2: Using an Explicit Path
+
+You can also specify an explicit path to store the serialized results:
 
 ```julia
+using MemoizedSerialization
+
+# Define a temporary directory for storage
 path = mktempdir()
 
+function sum(a, b)
+    println("Computing sum($a, $b)")
+    return a + b
+end
+
+# First call with (1, 2) - computation is performed and result is serialized at the specified path
 a, b = 1, 2
 result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 
+# Second call with (2, 2) - computation is performed and result is serialized at the specified path
 a, b = 2, 2
 result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 
+# Third call with (1, 2) - result is loaded from cache (deserialized) from the specified path
 a, b = 1, 2
-result = @memoized_serialization path "sum-$a-$b" sum(a, b) # cached
+result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 ```
+
+## Contributing
+
+Contributions, bug reports, and feature requests are welcome! Feel free to open an issue or submit a pull request.
