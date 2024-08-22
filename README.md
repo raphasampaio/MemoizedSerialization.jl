@@ -6,7 +6,7 @@
 
 ## Introduction
 
-MemoizedSerialization.jl is a Julia package that provides a macro for memoizing the results of function calls using Serialization.jl. This is particularly useful for expensive computations with non-hashable arguments, as it allows the user to define custom keys for memoization. This package allows you to persist the results of function calls and retrieve them from disk if they have been previously computed, saving time for repeated evaluations.
+MemoizedSerialization.jl is a Julia package that provides macros for memoizing the results of function calls using Serialization.jl. This is particularly useful for expensive computations with non-hashable arguments, as it allows the user to define custom keys for memoization. This package allows you to persist the results of function calls and retrieve them from disk if they have been previously computed, saving time for repeated evaluations.
 
 ## Features
 
@@ -55,13 +55,13 @@ You can also specify an explicit path to store the serialized results:
 ```julia
 using MemoizedSerialization
 
-# define a directory for storage
-path = mktempdir()
-
 function sum(a, b)
     println("Computing sum($a, $b)")
     return a + b
 end
+
+# define a directory for storage
+path = mktempdir()
 
 # first call with (1, 2) - computation is performed and result is serialized at the specified path
 a, b = 1, 2
