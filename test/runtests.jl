@@ -65,6 +65,9 @@ function test_memoized_serialization()
     @test struct11 == @memoized_serialization "struct_1_1" Struct(1, 1)
     @test calls == 3
 
+    MemoizedSerialization.clean!()
+    @test length(readdir(MemoizedSerialization.path())) == 0
+
     return nothing
 end
 
