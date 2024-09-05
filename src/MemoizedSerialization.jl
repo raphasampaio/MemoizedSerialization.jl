@@ -17,7 +17,7 @@ function path()
     return CACHE_PATH[]
 end
 
-function verbose(value::Bool)
+function verbose!(value::Bool)
     VERBOSE[] = value
     return nothing
 end

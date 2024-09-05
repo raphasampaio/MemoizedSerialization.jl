@@ -30,7 +30,7 @@ function vector(a::Integer)
 end
 
 function test_memoized_serialization()
-    MemoizedSerialization.verbose(true)
+    MemoizedSerialization.verbose!(true)
 
     global calls = 0
     @test 2 == @memoized_serialization "sum_1_1" sum(1, 1)
