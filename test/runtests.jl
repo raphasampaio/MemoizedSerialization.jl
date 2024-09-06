@@ -30,8 +30,6 @@ function vector(a::Integer)
 end
 
 function test_memoized_serialization()
-    MemoizedSerialization.verbose!(true)
-
     global calls = 0
     @test 2 == @memoized_serialization "sum_1_1" sum(1, 1)
     @test 2 == @memoized_serialization "sum_1_1" sum(1, 1)
@@ -68,7 +66,7 @@ function test_memoized_serialization()
     @test calls == 3
 
     MemoizedSerialization.clean!()
-    @test length(readdir(MemoizedSerialization.path())) == 0
+    @test length(readdir(MemoizedSerialization.cache_path())) == 0
 
     return nothing
 end
