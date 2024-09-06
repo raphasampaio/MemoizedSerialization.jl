@@ -4,7 +4,6 @@ using Serialization
 
 const CACHE_PATH = Ref{String}()
 const CACHE_SET = Set{String}()
-const VERBOSE = Ref{Bool}(false)
 
 export @memoized_serialization
 
@@ -17,11 +16,6 @@ function path()
     return CACHE_PATH[]
 end
 
-function verbose!(value::Bool)
-    VERBOSE[] = value
-    return nothing
-end
-
 function clean!()
     if isdir(CACHE_PATH[])
         rm(CACHE_PATH[], force = true, recursive = true)
@@ -31,23 +25,32 @@ function clean!()
     return nothing
 end
 
+function is_cached(key::AbstractString)
+    return key in CACHE_SET
+end
+
+function cache_path(path::AbstractString, key::AbstractString)
+    return joinpath(path, string(key, ".tmp"))
+end
+
+function load(path::AbstractString, key::AbstractString)
+    file = cache_path(path, key)
+    return Serialization.deserialize(file)
+end
+
+function save(path::AbstractString, key::AbstractString, data::Any)
+    file = cache_path(path, key)
+    push!(CACHE_SET, key)
+    Serialization.serialize(file, data)
+    return data
+end
+
 macro memoized_serialization(path, key, expr)
     return quote
-        file = joinpath($(esc(path)), string($(esc(key)), ".tmp"))
-
-        if $(esc(key)) in CACHE_SET
-            if VERBOSE[]
-                println("Loading from cache: ", $(esc(key)))
-            end
-            Serialization.deserialize(file)
+        if is_cached($(esc(key)))
+            load($(esc(path)), $(esc(key)))
         else
-            if VERBOSE[]
-                println("Saving to cache: ", $(esc(key)))
-            end
-            push!(CACHE_SET, $(esc(key)))
-            data = $(esc(expr))
-            Serialization.serialize(file, data)
-            data
+            save($(esc(path)), $(esc(key)), $(esc(expr)))
         end
     end
 end
