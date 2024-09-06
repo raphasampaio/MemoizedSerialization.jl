@@ -66,7 +66,7 @@ function test_memoized_serialization()
     @test calls == 3
 
     MemoizedSerialization.clean!()
-    @test length(readdir(MemoizedSerialization.path())) == 0
+    @test length(readdir(MemoizedSerialization.cache_path())) == 0
 
     return nothing
 end

@@ -12,10 +12,6 @@ function __init__()
     return nothing
 end
 
-function path()
-    return CACHE_PATH[]
-end
-
 function clean!()
     if isdir(CACHE_PATH[])
         rm(CACHE_PATH[], force = true, recursive = true)
@@ -29,17 +25,21 @@ function is_cached(key::AbstractString)
     return key in CACHE_SET
 end
 
-function cache_path(path::AbstractString, key::AbstractString)
+function cache_path()
+    return CACHE_PATH[]
+end
+
+function build_cache_path(path::AbstractString, key::AbstractString)
     return joinpath(path, string(key, ".tmp"))
 end
 
 function load(path::AbstractString, key::AbstractString)
-    file = cache_path(path, key)
+    file = build_cache_path(path, key)
     return Serialization.deserialize(file)
 end
 
 function save(path::AbstractString, key::AbstractString, data::Any)
-    file = cache_path(path, key)
+    file = build_cache_path(path, key)
     push!(CACHE_SET, key)
     Serialization.serialize(file, data)
     return data
