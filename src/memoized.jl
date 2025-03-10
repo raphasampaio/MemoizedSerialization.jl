@@ -24,14 +24,13 @@ function build_cache_path(path::AbstractString, key::AbstractString)
     return joinpath(path, string(key, ".tmp"))
 end
 
-function load(path::AbstractString, key::AbstractString)
+function deserialize(path::AbstractString, key::AbstractString)
     cache_path = build_cache_path(path, key)
     return Serialization.deserialize(cache_path)
 end
 
-function save(path::AbstractString, key::AbstractString, data::Any)
+function serialize(path::AbstractString, key::AbstractString, data::Any)
     push!(CACHE_SET, key)
-
     cache_path = build_cache_path(path, key)
     Serialization.serialize(cache_path, data)
     return data
@@ -40,9 +39,9 @@ end
 macro memoized_serialization(path, key, expr)
     return quote
         if is_cached($(esc(key)))
-            load($(esc(path)), $(esc(key)))
+            deserialize($(esc(path)), $(esc(key)))
         else
-            save($(esc(path)), $(esc(key)), $(esc(expr)))
+            serialize($(esc(path)), $(esc(key)), $(esc(expr)))
         end
     end
 end
