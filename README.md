@@ -22,7 +22,7 @@ MemoizedSerialization.jl is a Julia package that provides macros for memoizing t
 julia> ] add MemoizedSerialization
 ```
 
-### Example
+### Example: @memoized_serialization
 
 ```julia
 using MemoizedSerialization
@@ -44,6 +44,30 @@ result = @memoized_serialization "sum-$a-$b" sum(a, b)
 a, b = 1, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
 ```
+
+### Example: @memoized_lru
+    
+```julia
+using MemoizedSerialization
+
+function sum(a, b)
+    println("Computing sum($a, $b)")
+    return a + b
+end
+
+# first call with (1, 2) - computation is performed and result is serialized
+a, b = 1, 2
+result = @memoized_lru "sum-$a-$b" sum(a, b)
+
+# second call with (2, 2) - computation is performed and result is serialized
+a, b = 2, 2
+result = @memoized_lru "sum-$a-$b" sum(a, b)
+
+# third call with (1, 2) - result is loaded from cache (deserialized)
+a, b = 1, 2
+result = @memoized_lru "sum-$a-$b" sum(a, b)
+```
+
 
 ## Contributing
 
