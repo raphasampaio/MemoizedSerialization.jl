@@ -1,8 +1,13 @@
+function create_cache_directory!()
+    CACHE_PATH[] = mktempdir(; cleanup = true)
+    return nothing
+end
+
 function clean!()
-    if isdir(CACHE_PATH[])
+    if !isempty(CACHE_PATH) && isdir(CACHE_PATH[])
         rm(CACHE_PATH[], force = true, recursive = true)
     end
-    CACHE_PATH[] = mktempdir(; cleanup = true)
+    create_cache_directory!()
     empty!(CACHE_SET)
     return nothing
 end
@@ -11,36 +16,31 @@ function is_cached(key::AbstractString)
     return key in CACHE_SET
 end
 
-function cache_path()
-    return CACHE_PATH[]
+function build_cache_path(key::AbstractString)
+    if isempty(CACHE_PATH)
+        create_cache_directory!()
+    end
+    return joinpath(CACHE_PATH[], string(key, ".tmp"))
 end
 
-function build_cache_path(path::AbstractString, key::AbstractString)
-    return joinpath(path, string(key, ".tmp"))
-end
-
-function deserialize(path::AbstractString, key::AbstractString)
-    cache_path = build_cache_path(path, key)
+function deserialize(key::AbstractString)
+    cache_path = build_cache_path(key)
     return Serialization.deserialize(cache_path)
 end
 
-function serialize(path::AbstractString, key::AbstractString, data::Any)
+function serialize(key::AbstractString, data::Any)
     push!(CACHE_SET, key)
-    cache_path = build_cache_path(path, key)
+    cache_path = build_cache_path(key)
     Serialization.serialize(cache_path, data)
     return data
 end
 
-macro memoized_serialization(path, key, expr)
+macro memoized_serialization(key, expr)
     return quote
         if is_cached($(esc(key)))
-            deserialize($(esc(path)), $(esc(key)))
+            deserialize($(esc(key)))
         else
-            serialize($(esc(path)), $(esc(key)), $(esc(expr)))
+            serialize($(esc(key)), $(esc(expr)))
         end
     end
-end
-
-macro memoized_serialization(key, expr)
-    return :(@memoized_serialization(CACHE_PATH[], $(esc(key)), $(esc(expr))))
 end

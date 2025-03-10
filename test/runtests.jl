@@ -40,15 +40,14 @@ function test_memoized_serialization()
     @test 2 == @memoized_serialization "sum_1_1" sum(1, 1)
     @test calls == 3
 
-    path = mktempdir()
     global calls = 0
-    @test @memoized_serialization path "vector_4" vector(4) == [1, 2, 3, 4]
-    @test @memoized_serialization path "vector_3" vector(3) == [1, 2, 3]
-    @test @memoized_serialization path "vector_2" vector(2) == [1, 2]
-    @test @memoized_serialization path "vector_1" vector(1) == [1]
-    @test @memoized_serialization path "vector_2" vector(2) == [1, 2]
-    @test @memoized_serialization path "vector_3" vector(3) == [1, 2, 3]
-    @test @memoized_serialization path "vector_3" vector(4) == [1, 2, 3, 4]
+    @test @memoized_serialization "vector_4" vector(4) == [1, 2, 3, 4]
+    @test @memoized_serialization "vector_3" vector(3) == [1, 2, 3]
+    @test @memoized_serialization "vector_2" vector(2) == [1, 2]
+    @test @memoized_serialization "vector_1" vector(1) == [1]
+    @test @memoized_serialization "vector_2" vector(2) == [1, 2]
+    @test @memoized_serialization "vector_3" vector(3) == [1, 2, 3]
+    @test @memoized_serialization "vector_3" vector(4) == [1, 2, 3, 4]
     @test calls == 4
 
     struct11 = Struct(1, 1)

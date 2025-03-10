@@ -22,9 +22,7 @@ MemoizedSerialization.jl is a Julia package that provides macros for memoizing t
 julia> ] add MemoizedSerialization
 ```
 
-### Example 1: Using an Implicit Path
-
-The following example demonstrates memoization where the path for serialization is implicitly managed:
+### Example
 
 ```julia
 using MemoizedSerialization
@@ -45,35 +43,6 @@ result = @memoized_serialization "sum-$a-$b" sum(a, b)
 # third call with (1, 2) - result is loaded from cache (deserialized)
 a, b = 1, 2
 result = @memoized_serialization "sum-$a-$b" sum(a, b)
-
-```
-
-### Example 2: Using an Explicit Path
-
-You can also specify an explicit path to store the serialized results:
-
-```julia
-using MemoizedSerialization
-
-function sum(a, b)
-    println("Computing sum($a, $b)")
-    return a + b
-end
-
-# define a directory for storage
-path = mktempdir()
-
-# first call with (1, 2) - computation is performed and result is serialized at the specified path
-a, b = 1, 2
-result = @memoized_serialization path "sum-$a-$b" sum(a, b)
-
-# second call with (2, 2) - computation is performed and result is serialized at the specified path
-a, b = 2, 2
-result = @memoized_serialization path "sum-$a-$b" sum(a, b)
-
-# third call with (1, 2) - result is loaded from cache (deserialized) from the specified path
-a, b = 1, 2
-result = @memoized_serialization path "sum-$a-$b" sum(a, b)
 ```
 
 ## Contributing

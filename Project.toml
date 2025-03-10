@@ -1,6 +1,6 @@
 name = "MemoizedSerialization"
 uuid = "a7e9380e-af78-4e01-8a55-c3c07e4c7344"
-version = "0.5.2"
+version = "0.6.0"
 
 [deps]
 Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
