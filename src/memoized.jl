@@ -6,9 +6,11 @@ function create_cache_directory!()
     return nothing
 end
 
-function clean!()
+function clean!(; max_size::Integer = 10)
     create_cache_directory!()
     empty!(CACHE_SET)
+    empty!(LRU_CACHE)
+    resize!(LRU_CACHE; maxsize = max_size)
     return nothing
 end
 
@@ -20,8 +22,8 @@ function is_cache_directory_initialized()
     return isassigned(CACHE_PATH)
 end
 
-function is_cached(key::AbstractString)
-    return key in SERIALIZED_CACHE
+function is_in_cache_set(key::AbstractString)
+    return key in CACHE_SET
 end
 
 function build_cache_path(key::AbstractString)
@@ -45,10 +47,18 @@ end
 
 macro memoized_serialization(key, expr)
     return quote
-        if is_cached($(esc(key)))
+        if is_in_cache_set($(esc(key)))
             deserialize($(esc(key)))
         else
             serialize($(esc(key)), $(esc(expr)))
+        end
+    end
+end
+
+macro memoized_lru(key, expr)
+    return quote
+        get!(LRU_CACHE, $(esc(key))) do
+            $(esc(expr))
         end
     end
 end
