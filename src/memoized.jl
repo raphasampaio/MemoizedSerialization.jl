@@ -1,12 +1,12 @@
 function create_cache_directory!()
+    if isassigned(CACHE_PATH) && isdir(CACHE_PATH[])
+        rm(CACHE_PATH[], force = true, recursive = true)
+    end
     CACHE_PATH[] = mktempdir(; cleanup = true)
     return nothing
 end
 
 function clean!()
-    if isassigned(CACHE_PATH) && isdir(CACHE_PATH[])
-        rm(CACHE_PATH[], force = true, recursive = true)
-    end
     create_cache_directory!()
     empty!(CACHE_SET)
     return nothing
@@ -16,12 +16,16 @@ function cache_path()
     return CACHE_PATH[]
 end
 
+function is_cache_directory_initialized()
+    return isassigned(CACHE_PATH)
+end
+
 function is_cached(key::AbstractString)
-    return key in CACHE_SET
+    return key in SERIALIZED_CACHE
 end
 
 function build_cache_path(key::AbstractString)
-    if !isassigned(CACHE_PATH)
+    if !is_cache_directory_initialized()
         create_cache_directory!()
     end
     return joinpath(CACHE_PATH[], string(key, ".tmp"))
