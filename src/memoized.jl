@@ -1,5 +1,5 @@
 function __init__()
-    clean!()
+    CACHE_PATH[] = mktempdir(; cleanup = true)
     return nothing
 end
 
