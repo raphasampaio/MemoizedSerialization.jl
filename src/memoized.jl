@@ -1,8 +1,3 @@
-function __init__()
-    CACHE_PATH[] = mktempdir(; cleanup = true)
-    return nothing
-end
-
 function clean!()
     if isdir(CACHE_PATH[])
         rm(CACHE_PATH[], force = true, recursive = true)
