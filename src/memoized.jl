@@ -4,7 +4,7 @@ function create_cache_directory!()
 end
 
 function clean!()
-    if !isempty(CACHE_PATH) && isdir(CACHE_PATH[])
+    if isassigned(CACHE_PATH) && isdir(CACHE_PATH[])
         rm(CACHE_PATH[], force = true, recursive = true)
     end
     create_cache_directory!()
@@ -12,12 +12,16 @@ function clean!()
     return nothing
 end
 
+function cache_path()
+    return CACHE_PATH[]
+end
+
 function is_cached(key::AbstractString)
     return key in CACHE_SET
 end
 
 function build_cache_path(key::AbstractString)
-    if isempty(CACHE_PATH)
+    if !isassigned(CACHE_PATH)
         create_cache_directory!()
     end
     return joinpath(CACHE_PATH[], string(key, ".tmp"))
