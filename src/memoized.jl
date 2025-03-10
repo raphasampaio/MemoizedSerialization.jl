@@ -1,5 +1,5 @@
 function __init__()
-    CACHE_PATH[] = mktempdir(; cleanup = true)
+    clean!()
     return nothing
 end
 
@@ -25,15 +25,15 @@ function build_cache_path(path::AbstractString, key::AbstractString)
 end
 
 function load(path::AbstractString, key::AbstractString)
-    file = build_cache_path(path, key)
-    return Serialization.deserialize(file)
+    cache_path = build_cache_path(path, key)
+    return Serialization.deserialize(cache_path)
 end
 
 function save(path::AbstractString, key::AbstractString, data::Any)
     push!(CACHE_SET, key)
 
-    file = build_cache_path(path, key)
-    Serialization.serialize(file, data)
+    cache_path = build_cache_path(path, key)
+    Serialization.serialize(cache_path, data)
     return data
 end
 
