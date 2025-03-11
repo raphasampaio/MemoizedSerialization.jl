@@ -7,7 +7,7 @@ end
 macro memoized_lru(key, expr)
     return quote
         get!(LRU_CACHE, $(esc(key))) do
-            $(esc(expr))
+            return deepcopy($(esc(expr)))
         end
     end
 end
