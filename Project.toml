@@ -1,6 +1,6 @@
 name = "MemoizedSerialization"
 uuid = "a7e9380e-af78-4e01-8a55-c3c07e4c7344"
-version = "0.6.0"
+version = "0.5.3"
 
 [deps]
 LRUCache = "8ac3fa9e-de4c-5943-b1dc-09c6b5f20637"
