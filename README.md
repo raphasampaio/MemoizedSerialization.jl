@@ -19,7 +19,7 @@ MemoizedSerialization.jl is a Julia package that provides macros for memoizing t
 ### Installation
 
 ```julia
-julia> ] add MemoizedSerialization
+pkg> add MemoizedSerialization
 ```
 
 ### Example: @memoized_serialization
